@@ -10,7 +10,8 @@ plugins {
   id 'eclipse'
   id 'idea'
   id 'jacoco'
-  id 'io.franzbecker.gradle-lombok' version '1.11'
+  //id 'io.franzbecker.gradle-lombok' version '1.11'
+  id 'net.ltgt.apt' version '0.10'
 }
 
 apply plugin: 'application'
@@ -30,33 +31,32 @@ dependencies {
   compile('org.apache.commons:commons-lang3:3.7')
   compile('com.google.guava:guava:24.1-jre')
   compile('ch.qos.logback:logback-classic:1.2.3')
+  compile('org.projectlombok:lombok:1.16.20')
   testCompile('junit:junit:4.12')
   testCompile('org.mockito:mockito-core:2.18.0')
   testCompile('org.mockito:mockito-inline:2.18.0')
   //testCompile('org.powermock:powermock-api-mockito:1.7.4')
   //testCompile('org.powermock:powermock-module-junit4:1.7.4')
+
+  apt('org.projectlombok:lombok:1.16.20')
 }
 
 jar {
   enabled = true
 }
 
-lombok {
-  sha256 = ''
+task executableJar(type: Jar, dependsOn: jar)  {
+  archiveName = "${executableBaseName}.jar"
+  manifest {
+    attributes 'Main-Class' : mainClassName
+  }
+
+  from configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}
+  from "$buildDir/classes/java/main"
+  from "$buildDir/resources/main"
 }
 
-import io.franzbecker.gradle.lombok.task.DelombokTask
-task delombok(type: DelombokTask, dependsOn: compileJava) {
-  ext.outputDir = file("$buildDir/delombok")
-  outputs.dir(outputDir)
-  sourceSets.main.java.srcDirs.each {
-    inputs.dir(it)
-    args(it, "-d", outputDir)
-  }
-}
-task delombokHelp(type: DelombokTask) {
-  args "--help"
-}
+
 
 run {
   if (project.hasProperty('args')) {
@@ -71,11 +71,11 @@ run {
 eclipse.classpath.file.whenMerged { cp ->
   cp.entries.findAll { entry ->
     if (entry.kind == "output") {
-      entry.path = "${eclipseOutputPath}"
+      entry.path = "${eclipseOutputPath}/java/main"
 
     }
     if (entry.kind == "src") {
-      entry.output = "${eclipseSrcOutputPath}"
+      entry.output = "${eclipseSrcOutputPath}/java/main"
 
     }
   }

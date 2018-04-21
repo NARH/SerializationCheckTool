@@ -100,7 +100,7 @@ public class SerializableCheckerTest {
     SerializableChecker.check(UnSerializableBean.class);
     verify(mockAppender).doAppend(captorLoggingEvent.capture());
     final LoggingEvent loggingEvent = captorLoggingEvent.getValue();
-    assertThat(loggingEvent.getLevel(), is(Level.ERROR));
+    assertThat(loggingEvent.getLevel(), is(Level.INFO));
     assertThat(loggingEvent.getFormattedMessage(), is("com.github.narh.util.bean.UnSerializableBean checking. ... NG  not implements java.io.Serializable."));
   }
 
@@ -109,7 +109,7 @@ public class SerializableCheckerTest {
     SerializableChecker.check(NestedUnSerializableBean.class);
     verify(mockAppender).doAppend(captorLoggingEvent.capture());
     final LoggingEvent loggingEvent = captorLoggingEvent.getValue();
-    assertThat(loggingEvent.getLevel(), is(Level.ERROR));
+    assertThat(loggingEvent.getLevel(), is(Level.INFO));
     assertThat(loggingEvent.getFormattedMessage(), is("com.github.narh.util.bean.NestedUnSerializableBean checking. ... NG   not serialization."));
   }
 }
