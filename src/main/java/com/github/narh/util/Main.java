@@ -27,15 +27,34 @@
 
 package com.github.narh.util;
 
+
+import org.apache.commons.lang3.StringUtils;
+
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 起動クラス
  *
  * @author NARH https://github.com/NARH
  *
  */
+@Slf4j
 public class Main {
 
   public static void main(String... args) throws Exception {
+    if(log.isDebugEnabled()) log.debug("args {}", StringUtils.join(args));
+
+    if(null == args || 0 == args.length) {
+      log.info(" package name required.");
+      System.exit(-1);
+    }
+
+    if(log.isTraceEnabled()) log.trace("begin Main-main: {}", "class loader setup");
+    if(1 < args.length)
+      SerializableChecker.getClassLoader(args[1]);
+    if(log.isTraceEnabled()) log.trace("end Main-main: {}", "class loader setup");
+    if(log.isTraceEnabled()) log.trace("begin Main-main: {}", "checkPackage");
     SerializableChecker.checkPackage(args[0]);
+    if(log.isTraceEnabled()) log.trace("end Main-main: {}", "checkPackage");
   }
 }
