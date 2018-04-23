@@ -50,8 +50,12 @@ public class Main {
     }
 
     if(log.isTraceEnabled()) log.trace("begin Main-main: {}", "class loader setup");
-    if(1 < args.length)
-      SerializableChecker.getClassLoader(args[1]);
+    if(1 < args.length) {
+      String[] jarArgs = new String[args.length -1];
+      for(int i = 1; i < args.length; i++) jarArgs[i-1] = args[i];
+      if(log.isDebugEnabled()) log.debug("jarArgs {}", StringUtils.join(jarArgs));
+      SerializableChecker.getClassLoader(jarArgs);
+    }
     if(log.isTraceEnabled()) log.trace("end Main-main: {}", "class loader setup");
     if(log.isTraceEnabled()) log.trace("begin Main-main: {}", "checkPackage");
     SerializableChecker.checkPackage(args[0]);
