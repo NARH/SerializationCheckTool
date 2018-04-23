@@ -68,6 +68,10 @@ run {
 
 }
 
+tasks.withType(JavaCompile) {
+  options.encoding = 'UTF-8'
+}
+
 eclipse.classpath.file.whenMerged { cp ->
   cp.entries.findAll { entry ->
     if (entry.kind == "output") {
